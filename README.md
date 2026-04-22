@@ -2,17 +2,8 @@
 
 This project refactors the original monolithic Node clicker game into independent services behind an API gateway, each with its own SQLite database, plus Docker deployment.
 
-**GitHub repository (replace with your course submission URL):**  
-https://github.com/YOUR_USERNAME/cs440Project
-
-## Documentation (assignment deliverables)
-
-| Document | Purpose |
-|----------|---------|
-| [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) | High-level design, diagram, service boundaries and APIs |
-| [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md) | Dockerfiles, `docker-compose`, local run |
-| [docs/IMPLEMENTATION_REPORT.md](docs/IMPLEMENTATION_REPORT.md) | Challenges, API gateway notes |
-| [docs/REFLECTION.md](docs/REFLECTION.md) | Trade-offs of microservices for this system |
+**GitHub repository:**  
+https://github.com/car723/CS440_Project_3
 
 ## Quick start (Docker)
 
