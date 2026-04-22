@@ -1,0 +1,82 @@
+services:
+  user-service:
+    build:
+      context: ./services/user-service
+    environment:
+      PORT: "3001"
+      DB_PATH: /data/users.db
+    volumes:
+      - user-service-data:/data
+    expose:
+      - "3001"
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:3001/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
+
+  game-state-service:
+    build:
+      context: ./services/game-state-service
+    environment:
+      PORT: "3002"
+      DB_PATH: /data/game_state.db
+    volumes:
+      - game-state-data:/data
+    expose:
+      - "3002"
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:3002/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
+
+  game-engine-service:
+    build:
+      context: ./services/game-engine-service
+    environment:
+      PORT: "3003"
+      GAME_STATE_URL: http://game-state-service:3002
+      CATALOG_DB_PATH: /data/catalog.db
+    volumes:
+      - game-engine-catalog:/data
+    depends_on:
+      game-state-service:
+        condition: service_healthy
+    expose:
+      - "3003"
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:3003/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+
+  api-gateway:
+    build:
+      context: .
+      dockerfile: services/api-gateway/Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      PORT: "3000"
+      USER_SERVICE_URL: http://user-service:3001
+      GAME_ENGINE_URL: http://game-engine-service:3003
+    depends_on:
+      user-service:
+        condition: service_healthy
+      game-engine-service:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:3000/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+volumes:
+  user-service-data:
+  game-state-data:
+  game-engine-catalog:

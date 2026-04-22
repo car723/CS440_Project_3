@@ -1,0 +1,17 @@
+{
+  "name": "clicker-game",
+  "version": "2.0.0",
+  "description": "Clicker game with microservices, API gateway, and Docker",
+  "private": true,
+  "scripts": {
+    "start": "node services/api-gateway/server.js",
+    "dev": "concurrently -n user,state,engine,gateway -c blue,green,magenta,cyan \"npm start --prefix services/user-service\" \"npm start --prefix services/game-state-service\" \"npm start --prefix services/game-engine-service\" \"npm start --prefix services/api-gateway\""
+  },
+  "dependencies": {
+    "body-parser": "^1.20.4",
+    "express": "^4.22.1"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.2"
+  }
+}
